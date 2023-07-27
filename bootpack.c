@@ -8,13 +8,17 @@
 #define COL8_SKYBLUE 6
 #define COL8_WHITE 7
 #define COL8_GRAY 8
-#define COL8_DARKRED 9
-#define COL8_DARKGREEN 10
-#define COL8_DARKYELLOW 11
-#define COL8_DARKBLUE 12
-#define COL8_DARKPURPLE 13
-#define COL8_DARKSKYBLUE 14
-#define COL8_DARKGLAY 15
+#define COL8_DARK_RED 9
+#define COL8_DARK_GREEN 10
+#define COL8_DARK_YELLOW 11
+#define COL8_DARK_BLUE 12
+#define COL8_DARK_PURPLE 13
+#define COL8_DARK_SKYBLUE 14
+#define COL8_DARK_GRAY 15
+
+// Display pixel size
+#define XSIZE 320
+#define YSIZE 200
 
 // nasmfunc.asm
 void _io_hlt(void);
@@ -37,13 +41,24 @@ void boxfill8(unsigned char *vram, int xsize, unsigned char c, int x0, int y0,
               int x1, int y1);
 
 void HariMain(void) {
-    char *p;
+    char *vram;
+    int xsize, ysize;
 
-    init_palette();  // Initialize palette
+    init_palette();          // Initialize palette
+    vram = (char *)0xa0000;  // VRAM address
+    xsize = 320;
+    ysize = 200;
 
-    p = (char *)0xa0000;  // Address for VRAM
-
-    boxfill8(p, 320, COL8_YELLOW, 20, 20, 180, 120);
+    // Draw wallpaper and taskbar
+    boxfill8(vram, xsize, COL8_DARK_SKYBLUE, 0, 0, xsize - 1,
+             ysize - 29);  // wallpaper
+    boxfill8(vram, xsize, COL8_GRAY, 0, ysize - 28, xsize - 1,
+             ysize - 28);  // top border of taskbar
+    boxfill8(vram, xsize, COL8_WHITE, 0, ysize - 27, xsize - 2,
+             ysize - 27);  // top border of taskbar
+    boxfill8(vram, xsize, COL8_GRAY, 0, ysize - 26, xsize - 1,
+             ysize - 1);  // taskbar
+    // TODO draw taskbar buttons (as in day4)
 
     for (;;) _io_hlt();
 }
